@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>HerShield: Concept and Demo Report</title>
+<style>
+  @page { size: A4; margin: 16mm 15mm 16mm 15mm; }
+  :root { --a: #7C3AED; --b: #EC4899; --ink: #1C1530; --muted: #5F5873; --line: #E4DEEE; --soft: #F6F2FC; }
+  * { box-sizing: border-box; }
+  body { font-family: "Segoe UI", Arial, sans-serif; color: var(--ink); font-size: 10.6pt; line-height: 1.5; margin: 0; }
+  h1 { font-size: 22pt; margin: 0 0 6px; color: var(--ink); }
+  h2 { font-size: 15pt; margin: 0 0 8px; padding-bottom: 6px; border-bottom: 3px solid var(--a); display: flex; gap: 10px; align-items: baseline; }
+  h2 .n { color: var(--b); font-size: 13pt; }
+  h3 { font-size: 11.5pt; margin: 14px 0 4px; color: var(--a); break-after: avoid; page-break-after: avoid; }
+  p { margin: 6px 0; }
+  ul, ol { margin: 4px 0 8px 18px; padding: 0; }
+  li { margin: 2px 0; }
+  .page { page-break-before: always; }
+  .muted { color: var(--muted); }
+  .small { font-size: 9pt; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 9.6pt; }
+  th { background: var(--a); color: #fff; text-align: left; padding: 6px 8px; }
+  td { border-bottom: 1px solid var(--line); padding: 6px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #FBF9FE; }
+  .box { background: var(--soft); border-left: 4px solid var(--a); padding: 10px 12px; border-radius: 0 8px 8px 0; margin: 10px 0; page-break-inside: avoid; }
+  .box.pink { border-color: var(--b); background: #FDF2F8; }
+  .box.warn { border-color: #D97706; background: #FFFBEB; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .tag { display: inline-block; font-size: 8pt; font-weight: 700; padding: 1px 7px; border-radius: 99px; }
+  .tag.ok { background: #DCFCE7; color: #166534; } .tag.soon { background: #FEF3C7; color: #92400E; } .tag.no { background: #FEE2E2; color: #991B1B; }
+  code { font-family: Consolas, monospace; font-size: 9pt; background: #F1ECFA; padding: 0 4px; border-radius: 4px; }
+
+  /* Cover */
+  .cover { height: 260mm; display: flex; flex-direction: column; justify-content: space-between; }
+  .cover .band { background: linear-gradient(135deg, #2E1065, var(--a) 55%, var(--b)); color: #fff; border-radius: 18px; padding: 34px 30px; }
+  .cover .band h1 { color: #fff; font-size: 40pt; letter-spacing: .5px; margin-top: 18px; }
+  .cover .band .sub { font-size: 15pt; opacity: .95; }
+  .cover .logo { background: #fff; width: 120px; height: 120px; border-radius: 28px; display: grid; place-items: center; }
+  .cover .logo img { width: 96px; }
+  .cover .meta td { border: 0; padding: 3px 0; background: none !important; }
+
+  /* Flow */
+  .flow { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin: 10px 0; }
+  .flow div { background: var(--soft); border: 1.5px solid var(--a); border-radius: 10px; padding: 8px 6px; text-align: center; font-size: 8.6pt; position: relative; }
+  .flow div b { display: block; color: var(--a); font-size: 9.6pt; }
+  .flow div:not(:last-child)::after { content: "➜"; position: absolute; right: -10px; top: 40%; color: var(--b); font-size: 11pt; }
+
+  /* Chain diagram */
+  .chain { display: flex; gap: 0; align-items: center; margin: 10px 0; }
+  .chain .blk { flex: 1; border: 1.5px solid #16A34A; background: #F0FDF4; border-radius: 8px; padding: 6px; font-size: 8pt; }
+  .chain .blk b { color: #166534; }
+  .chain .arr { width: 22px; text-align: center; color: #16A34A; font-weight: 700; }
+  .chain .blk.bad { border-color: #DC2626; background: #FEF2F2; } .chain .blk.bad b { color: #991B1B; }
+
+  /* Screens */
+  .scr { display: grid; grid-template-columns: 34mm 1fr; gap: 12px; padding: 7px 0; border-bottom: 1px dashed var(--line); page-break-inside: avoid; }
+  .scr img { width: 34mm; border-radius: 10px; border: 1px solid #ddd; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+  .scr h4 { margin: 0 0 4px; font-size: 11pt; }
+  .scr .num { display: inline-block; background: var(--a); color: #fff; border-radius: 6px; padding: 0 6px; font-size: 9pt; margin-right: 6px; }
+  .scr table { font-size: 8.9pt; margin: 4px 0; }
+  .scr td:first-child { font-weight: 600; white-space: nowrap; width: 34%; }
+
+  /* Architecture */
+  .arch { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 8px 0; }
+  .arch > div { border: 1.5px solid var(--line); border-radius: 10px; padding: 8px 10px; font-size: 9pt; }
+  .arch > div b { color: var(--a); display: block; margin-bottom: 3px; }
+  .footer-note { font-size: 8.5pt; color: var(--muted); margin-top: 10px; }
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<section class="cover">
+  <div class="band">
+    <div class="logo"><img src="../app/logo.svg" alt="HerShield logo"></div>
+    <h1>HerShield</h1>
+    <div class="sub">The black box for gender-based violence.<br><b>The truth, sealed, so it can't be ignored, edited or made up.</b></div>
+  </div>
+  <div>
+    <p style="font-size:12.5pt;max-width:150mm">A voice-triggered evidence recorder. It works offline and seals each recording so nobody can change it. It protects the woman by capturing what happens to her. It is fair to the accused because it keeps only facts that cannot be changed, never anyone's version of events.</p>
+    <table class="meta" style="width:auto;font-size:10.5pt;margin-top:14px">
+      <tr><td class="muted" style="width:44mm">Event</td><td>Women Empowerment Through Technology Hackathon (WEtTech 2026)</td></tr>
+      <tr><td class="muted">Organiser</td><td>Rosebank International, Faculty of ICT. Intercampus finale</td></tr>
+      <tr><td class="muted">Team</td><td><b>HerShield</b> (team code 4.1), Polokwane campus. Presented by Elijah, third-year IT (Software Development)</td></tr>
+      <tr><td class="muted">Date</td><td>31 October 2026</td></tr>
+      <tr><td class="muted">Live demo</td><td><b>https://hershield-wheat.vercel.app</b> (open on any phone or computer)</td></tr>
+      <tr><td class="muted">Document</td><td>Concept, design rationale and demo walkthrough (prototype v0.1)</td></tr>
+    </table>
+  </div>
+  <div class="box small"><b>Status:</b> This is a <b>working prototype that shows the skeleton of the full product</b>. Features marked <span class="tag ok">works in demo</span> run today. Features marked <span class="tag soon">full version</span> have their screen and place in the app, but are not built yet. Section 13 lists exactly which is which.</div>
+</section>
+
+<!-- ============ 1. SUMMARY ============ -->
+<section class="page">
+  <h2><span class="n">01</span> Summary</h2>
+  <p>South Africa has a gender-based violence (GBV) crisis, and it also has a <b>trust crisis</b>. Many women who report abuse are not believed, because what happened behind closed doors comes down to <i>her word against his</i>. At the same time, in a climate of anger, an accusation is sometimes believed without proof, which is unfair to an innocent person. <b>Both problems have the same cause: there is no trustworthy evidence.</b></p>
+  <p><b>HerShield</b> fixes the evidence. It works like the black box on an aeroplane or a dashcam in a car: it does not take sides, it records what happens. A woman sets her own secret everyday phrase, for example <i>"Have you seen my red scarf?"</i>. When she says it, her phone starts recording in secret. She does not need to touch, unlock or even reach the phone. Every few seconds the audio, time and GPS location get a cryptographic fingerprint, and each fingerprint is linked to the one before it. <b>Nobody can delete, edit or trim a recording, not the abuser and not the woman herself.</b> A police officer, lawyer or court can later check that the recording is authentic.</p>
+  <div class="two">
+    <div class="box"><b>For her:</b> She can capture evidence without touching her phone, even while it is in a bag or across the room. The evidence survives if he grabs or searches the phone, because it cannot be deleted and the app hides behind a calculator.</div>
+    <div class="box pink"><b>For justice:</b> The evidence cannot be fabricated or edited. HerShield never accuses anyone. It only preserves facts, and the same facts can clear someone who is falsely accused.</div>
+  </div>
+  <h3>Why this is new</h3>
+  <p>Most GBV apps are <b>panic buttons</b>. They alert someone, and when the moment passes, nothing is left that a court can use. HerShield focuses on what happens afterwards: <b>evidence that people believe because it cannot be tampered with.</b> It also works <b>without data or signal</b>, which matters for women in rural areas and women who cannot afford data.</p>
+</section>
+
+<!-- ============ 2. CHALLENGE ============ -->
+<section>
+  <h2 style="margin-top:18px"><span class="n">02</span> The challenge</h2>
+  <h3>What problem are we solving, and who has it?</h3>
+  <ul>
+    <li><b>Women experiencing domestic violence, kidnapping, harassment or intimidation</b>, often in private, with no witnesses.</li>
+    <li>When she reports it, the case often depends on <b>her word against his</b>. Without evidence, cases are withdrawn, protection orders are hard to get, and many women stop reporting.</li>
+    <li><b>She cannot use her phone during the attack.</b> Panic apps assume she can unlock her phone and press a button while being attacked. Usually she cannot.</li>
+    <li>When evidence does exist (photos, voice notes, messages), <b>the abuser often deletes it</b> by taking or searching her phone. A defence lawyer can also claim it was <b>edited</b>.</li>
+    <li><b>The other side of the problem:</b> because the issue is so sensitive, a false or exaggerated accusation can destroy an innocent person. A fair system needs evidence that cannot be invented.</li>
+  </ul>
+  <div class="box warn"><b>Our key insight:</b> The country does not need another way to <i>accuse</i>. It needs a way to <b>prove</b>. If the evidence is trustworthy, a woman who tells the truth gets believed, and a false claim cannot be backed up with fake evidence.</div>
+</section>
+
+<!-- ============ 3/4. HOW IT WORKS ============ -->
+<section class="page">
+  <h2><span class="n">03</span> How HerShield works</h2>
+  <div class="flow">
+    <div><b>1. Set up</b>Choose a secret phrase, PIN, theme and disguise</div>
+    <div><b>2. Armed</b>The phone listens on-device for her phrase only</div>
+    <div><b>3. Triggered</b>Phrase, shake or tap. No unlocking needed</div>
+    <div><b>4. Covert capture</b>Audio, time and GPS. Screen looks locked</div>
+    <div><b>5. Sealed</b>Each 4-second piece is fingerprinted and chained</div>
+    <div><b>6. Verified</b>Police or court checks the file is authentic</div>
+  </div>
+
+  <h3>Step 1: Set up, once, when the app is installed</h3>
+  <p>She chooses her own <b>secret phrase</b>. It works like "Hey Siri", but it is a normal sentence that nobody would recognise as a trigger. She says it three times so the phone learns her voice. She also sets a <b>PIN</b>, an optional <b>duress PIN</b>, her <b>theme colours</b>, the app's <b>disguise</b> (a working calculator), and optional <b>trusted people</b>.</p>
+
+  <h3>Step 2: Armed, listening only for the phrase</h3>
+  <p>The phone runs a small <b>wake-word detector on the device</b>, the same kind of technology behind "Hey Siri" and "OK Google". While waiting, it does not record, store or send anything. It only checks each moment of sound for her phrase and then throws the sound away. That keeps her and the people around her private.</p>
+
+  <h3>Step 3: Triggered, without touching the phone</h3>
+  <p>She says her phrase during an argument, an assault, a kidnapping, or whenever she feels unsafe. <b>The man has no idea a recording has started</b>, because she said something ordinary. Backup triggers cover situations where she cannot speak: <b>shaking the phone three times</b>, <b>triple-tapping the logo</b>, and in the full version a <b>volume-button pattern</b> or a <b>Bluetooth bracelet or smartwatch button</b>.</p>
+
+  <h3>Step 4: Covert capture</h3>
+  <p>The screen shows a black "locked" clock face, or the calculator. Nothing on it says "recording". The microphone records audio, and the app stores the <b>GPS location</b> and <b>time</b>. All of this uses hardware already in the phone, so <b>no data, airtime or signal is needed</b>. To stop recording, she has to enter her PIN, so he cannot stop it.</p>
+
+  <h3>Step 5: Sealed, so nobody can change it</h3>
+  <p>The recording is cut into <b>4-second pieces</b>. As soon as each piece is saved, HerShield calculates a <b>SHA-256 fingerprint</b> of it. That is a 64-character code that changes completely if even one bit of the audio changes. Each piece's seal includes the <i>previous</i> piece's seal, which forms a <b>chain</b>, the same idea used in blockchains:</p>
+  <div class="chain">
+    <div class="blk"><b>Piece #0</b><br>audio + time + GPS<br>seal <code>40ae…b9e6</code></div><div class="arr">⛓</div>
+    <div class="blk"><b>Piece #1</b><br>+ seal of #0<br>seal <code>4371…bec5</code></div><div class="arr">⛓</div>
+    <div class="blk"><b>Piece #2</b><br>+ seal of #1<br>seal <code>f970…d513</code></div><div class="arr">⛓</div>
+    <div class="blk"><b>Piece #3</b><br>+ seal of #2<br>seal <code>22a5…4629</code></div>
+  </div>
+  <p>If someone removes even one second from piece #1, its fingerprint no longer matches, and every seal after it breaks too. The tampering is <b>immediately visible</b>. Because the pieces are sealed while she is still recording, at most the last 4 seconds are ever unsealed.</p>
+
+  <h3>Step 6: Vault and verification</h3>
+  <p>Sealed recordings go into the <b>Evidence Vault</b>. The vault has <b>no delete button and no edit tool</b>. When she is ready, she can <b>export</b> the original audio plus a <b>manifest</b>, a file listing every fingerprint, and release it to SAPS, a court or her lawyer. Anyone can use the <b>Verify</b> tool to check that a file is byte-for-byte identical to the sealed original.</p>
+</section>
+
+<!-- ============ 5. WHY ============ -->
+<section class="page">
+  <h2><span class="n">04</span> Why it works this way: design decisions</h2>
+  <table>
+    <tr><th style="width:30%">Decision</th><th>Why</th></tr>
+    <tr><td><b>A voice phrase that she chooses</b></td><td>During an assault she often cannot reach, unlock or look at her phone. Speaking is the one thing she can still do. A phrase she picks herself is unique to her, so an abuser cannot learn "the HerShield word" from the internet.</td></tr>
+    <tr><td><b>An ordinary sentence, not a command</b></td><td>"Hey HerShield, record" would warn him and put her in danger. A sentence like "Did mama call today?" gives nothing away.</td></tr>
+    <tr><td><b>Backup triggers (shake, tap, button, bracelet)</b></td><td>She might be gagged, or too afraid to speak. Every situation needs at least one way to trigger recording.</td></tr>
+    <tr><td><b>Offline-first</b></td><td>Many women have no data, or are in places with no signal. Abusers also often control the Wi-Fi or airtime. Microphone, clock, GPS and storage all work with no connection.</td></tr>
+    <tr><td><b>Audio first, not video</b></td><td>Audio works from a pocket or bag and in the dark. Files are small enough to fit on cheap phones. Video is planned as an option.</td></tr>
+    <tr><td><b>4-second sealed pieces</b></td><td>If the phone is smashed in the middle of an incident, everything up to the last 4 seconds is already sealed and safe.</td></tr>
+    <tr><td><b>No delete, no edit, by anyone</b></td><td>If <i>he</i> could delete it, the evidence would disappear. If <i>she</i> could edit or delete it, defence lawyers could argue the evidence was selected or doctored. Permanent, untouched evidence is what makes it credible.</td></tr>
+    <tr><td><b>She can choose who listens</b></td><td>Three options: <b>(1) she can listen after entering her PIN</b> (recommended, read-only), <b>(2) she can listen any time</b>, or <b>(3) fully sealed until an official release</b>, for the highest-risk users. Hearing a recording again can be traumatic, and being forced to play it to an abuser is dangerous, so she decides.</td></tr>
+    <tr><td><b>A disguise and a duress PIN</b></td><td>If he searches her phone, he sees a calculator. If he forces her to unlock it, the duress PIN opens an <b>empty decoy</b>, and the real evidence stays hidden and safe.</td></tr>
+    <tr><td><b>Her choice of theme and colours</b></td><td>It is her tool and it should feel like hers. Personal ownership increases daily use. Dark mode also helps her use it discreetly at night.</td></tr>
+    <tr><td><b>Stopping a recording needs the PIN</b></td><td>An abuser who finds the phone cannot end the recording.</td></tr>
+    <tr><td><b>HerShield never labels anyone</b></td><td>The app records events. It does not make accusations or decide guilt. Only courts decide guilt. That keeps it fair, and legally and ethically safe.</td></tr>
+  </table>
+</section>
+
+<!-- ============ 6. BOTH SIDES ============ -->
+<section>
+  <h2 style="margin-top:16px"><span class="n">05</span> Protecting the truth on both sides</h2>
+  <p>We designed HerShield around a hard question: <b>"What if a woman lies?"</b> Our answer is that HerShield does not take her word for anything. It does not store her version of events. It stores raw recordings that cannot be altered.</p>
+  <div class="two">
+    <div class="box"><b>What HerShield proves</b><ul><li>This recording is genuine and unedited</li><li>When it was captured, and where (GPS)</li><li>Which device captured it</li><li>That nothing was cut out or added</li></ul></div>
+    <div class="box pink"><b>What HerShield does NOT do</b><ul><li>It does not decide who is guilty. Courts do that</li><li>It does not store written accusations or "reports"</li><li>It does not publish, name or shame anyone</li><li>It cannot turn an edited or faked file into "evidence"</li></ul></div>
+  </div>
+  <p><b>Fairness built in:</b> the recording is complete, so if it shows something different from what is claimed, <b>it supports the accused</b>. A woman cannot pick out a convenient 10 seconds, because the whole session is sealed. A file from another app, or an edited clip, fails verification. A truthful woman is believed, and an innocent man is protected from fake evidence.</p>
+  <p class="muted small"><b>Known limit (we say this openly):</b> no technology can stop someone staging a fake scene in real life. But a staged recording is still a complete, timestamped, location-tagged, unedited recording, and a court can examine it like any other evidence. HerShield raises the bar for false claims. It does not replace investigation.</p>
+</section>
+
+<!-- ============ 7. OFFLINE & COST ============ -->
+<section class="page">
+  <h2><span class="n">06</span> Offline use and cost</h2>
+  <p><b>Our question was: "Will this cost the user money?"</b> The core of HerShield costs her <b>nothing to use</b>, because it only uses hardware she already has:</p>
+  <table>
+    <tr><th>Part</th><th>Uses</th><th>Needs data or signal?</th><th>Cost to user</th></tr>
+    <tr><td>Listening for the phrase</td><td>On-device wake-word engine</td><td>No</td><td>Free</td></tr>
+    <tr><td>Recording audio</td><td>Phone microphone (with permission)</td><td>No</td><td>Free</td></tr>
+    <tr><td>Date and time</td><td>Phone clock (full version: GPS time as well)</td><td>No</td><td>Free</td></tr>
+    <tr><td>Location</td><td>GPS chip (works without data)</td><td>No</td><td>Free</td></tr>
+    <tr><td>Sealing (fingerprints)</td><td>Phone processor (SHA-256)</td><td>No</td><td>Free</td></tr>
+    <tr><td>Storage</td><td>Phone storage. About 1 MB per minute of compressed audio</td><td>No</td><td>Free</td></tr>
+    <tr><td>Cloud backup <span class="tag soon">full version</span></td><td>Encrypted upload when she gets Wi-Fi or data</td><td>Yes, optional</td><td>Small data use, ideally zero-rated</td></tr>
+    <tr><td>Alert to trusted people <span class="tag soon">full version</span></td><td>SMS with location</td><td>Signal</td><td>Covered by the service, not by her</td></tr>
+  </table>
+  <h3>How we make offline evidence even stronger</h3>
+  <p>A phone's own clock can be changed by the user. So in the full version, as soon as the phone finds <b>any</b> connection, it sends <b>only the fingerprints</b> (a few bytes, never the audio) to a <b>trusted timestamp server</b>. This proves the recording existed <i>at that time</i> and has not been changed since. If there is no data at all, the fingerprint can be sent as <b>one short SMS</b> to the HerShield service. The phone also stores GPS satellite time, which the user cannot change.</p>
+  <h3>Running costs for us, the service</h3>
+  <ul>
+    <li><b>Wake-word engine:</b> open-source options (e.g. openWakeWord, Vosk) cost nothing, and commercial engines (e.g. Picovoice Porcupine) charge licence fees. We would start open source.</li>
+    <li><b>Cloud storage and timestamping:</b> cheap per user. Most users would only back up fingerprints, not audio.</li>
+    <li><b>Funding model:</b> free to every woman, always. We would look for funding from GBV NGOs, government (e.g. the Department of Women, Youth and Persons with Disabilities), CSI programmes, and partnerships with mobile networks for zero-rated data.</li>
+  </ul>
+</section>
+
+<!-- ============ 8. PLATFORMS ============ -->
+<section>
+  <h2 style="margin-top:16px"><span class="n">07</span> Android and iOS: what each one allows</h2>
+  <p>HerShield must work on both. The two systems have different rules, and we designed around them honestly:</p>
+  <table>
+    <tr><th style="width:22%"></th><th>Android</th><th>iPhone (iOS)</th></tr>
+    <tr><td><b>Always-on phrase listening</b></td><td>Yes, through a <i>foreground service</i> with microphone access. Android requires a small notification while it runs. We keep it neutral (e.g. "Calculator is running").</td><td>Restricted. Apple lets only Siri listen all the time. The app listens while it is open or in active background audio mode. Our main route on iPhone is a <b>Siri Shortcut / App Intent</b> with her own custom phrase.</td></tr>
+    <tr><td><b>No-voice triggers</b></td><td>Volume-button pattern, shake, Bluetooth bracelet, smartwatch (Wear OS)</td><td><b>Back Tap</b> (double or triple tap on the back of the phone), the <b>Action Button</b> (newer iPhones), Apple Watch, Bluetooth bracelet</td></tr>
+    <tr><td><b>Recording with the screen off</b></td><td>Yes, in the foreground service</td><td>Yes, once recording has started</td></tr>
+    <tr><td><b>Microphone indicator</b></td><td>A small green dot appears (Android 12+)</td><td>A small orange dot appears</td></tr>
+    <tr><td><b>Secure key storage</b></td><td>Android Keystore</td><td>Secure Enclave / Keychain</td></tr>
+  </table>
+  <p class="muted small">Being honest about these limits is part of our design. We do not promise what the phone systems will not allow. Instead, the full version adds a <b>low-cost Bluetooth panic bracelet</b>, which works the same on every phone. It also matters for women who cannot keep the phone on their body.</p>
+</section>
+
+<!-- ============ 9. DEMO WALKTHROUGH ============ -->
+<section class="page">
+  <h2><span class="n">08</span> Demo walkthrough: every screen and button</h2>
+  <p>These screenshots are from the working demo (PIN <code>1234</code>, duress PIN <code>0000</code>, phrase <i>"Have you seen my red scarf"</i>). Buttons marked <span class="tag" style="background:#FFF7ED;color:#C2410C">DEMO</span> exist only so the judges can see what happens behind the scenes. They are not in the real app.</p>
+
+  <h3>A. First-time setup (7 steps)</h3>
+  <div class="scr"><img src="screens/01-onboard-1-welcome.png"><div><h4><span class="num">1</span>Welcome</h4><p>Introduces the three promises: it starts with your voice, it is sealed the moment it is captured, and it records facts, not accusations.</p><table><tr><td>Set up my shield</td><td>Starts the setup wizard.</td></tr></table></div></div>
+  <div class="scr"><img src="screens/02-onboard-2-how-it-works.png"><div><h4><span class="num">2</span>How your shield works</h4><p>Explains the five stages (Armed, Triggered, Sealed, Protected, Verified) in plain language before she gives any permissions, so she knows exactly what she is agreeing to.</p><table><tr><td>Continue</td><td>Next step.</td></tr></table></div></div>
+  <div class="scr"><img src="screens/03-onboard-3-secret-phrase.png"><div><h4><span class="num">3</span>Your secret phrase</h4><p>She types her own trigger sentence. Tips help her choose a good one.</p><table><tr><td>Phrase box</td><td>Her private trigger (at least 3 words).</td></tr><tr><td>🎙️ Say phrase now</td><td>Listens and checks it heard the phrase correctly. Counts to 3/3 to "train" her voice.</td></tr><tr><td>Continue</td><td>Saves the phrase on the phone only.</td></tr></table></div></div>
+  <div class="scr"><img src="screens/04-onboard-4-theme.png"><div><h4><span class="num">4</span>Make it yours</h4><p>Personal theme. Changes apply immediately to the live preview.</p><table><tr><td>Colour circles</td><td>6 preset themes (Violet, Rose, Teal, Ocean, Amber, Graphite).</td></tr><tr><td>Rainbow circle</td><td>Any custom colour.</td></tr><tr><td>Dark mode switch</td><td>Dark theme for discreet use at night.</td></tr></table></div></div>
+  <div class="scr"><img src="screens/05-onboard-5-pin-disguise.png"><div><h4><span class="num">5</span>Lock and disguise</h4><table><tr><td>PIN</td><td>4–8 digits. Opens the app (typed into the calculator) and is needed to stop a recording.</td></tr><tr><td>Duress PIN</td><td>Optional. Opens an <b>empty decoy</b> if she is forced to unlock the app.</td></tr><tr><td>Disguise as</td><td>Calculator (works now). Notes and Weather <span class="tag soon">full version</span>.</td></tr></table></div></div>
+  <div class="scr"><img src="screens/06-onboard-6-permissions.png"><div><h4><span class="num">6</span>Permissions</h4><p>Each permission is explained. All of them work without data.</p><table><tr><td>Allow (Microphone)</td><td>Asks the phone for microphone access.</td></tr><tr><td>Allow (Location)</td><td>Asks for GPS access.</td></tr><tr><td>Allow (Background)</td><td>Keeps the shield armed with the screen off (full version: foreground service).</td></tr><tr><td>Allow (Notifications)</td><td>Silent notifications only.</td></tr></table></div></div>
+  <div class="scr"><img src="screens/07-onboard-7-trusted-people.png"><div><h4><span class="num">7</span>Trusted people</h4><table><tr><td>+ Add trusted person</td><td>Saves a name and number. Full version: they get an SMS with her location when the shield triggers.</td></tr><tr><td>Finish: arm my shield</td><td>Completes setup and arms the shield.</td></tr></table></div></div>
+
+  <h3>B. Everyday use</h3>
+  <div class="scr"><img src="screens/09-disguise-calculator-pin-typed.png"><div><h4><span class="num">8</span>The disguise: a real calculator</h4><p>This is what anyone sees when they open the app. It does real maths.</p><table><tr><td>Type PIN, then "="</td><td>Opens HerShield (here 1234 =).</td></tr><tr><td>Type duress PIN, then "="</td><td>Opens the empty decoy.</td></tr><tr><td>Any other sum</td><td>Works as a normal calculator.</td></tr></table></div></div>
+  <div class="scr"><img src="screens/08-home-armed.png"><div><h4><span class="num">9</span>Shield (home)</h4><table><tr><td>Pulsing logo</td><td>Shows the shield is armed and listening. <b>Triple-tap</b> it to trigger recording.</td></tr><tr><td>Shield switch</td><td>Pause it in a safe place (e.g. church, work).</td></tr><tr><td>Your triggers</td><td>Shows active triggers. The phrase is partly hidden.</td></tr><tr><td>▶ Simulate trigger <i>DEMO</i></td><td>Starts recording exactly as if the phrase had been heard.</td></tr><tr><td>🎙️ Test my phrase</td><td>Checks the phone recognises her phrase, without recording.</td></tr><tr><td>🧮 Hide app</td><td>Goes straight back to the calculator.</td></tr><tr><td>✕ Exit (top right)</td><td><b>Quick exit</b>, available on every screen. Jumps to the calculator immediately.</td></tr><tr><td>Bottom tabs</td><td>Shield · Vault · Verify · Help · Settings.</td></tr></table></div></div>
+
+  <h3>C. When the shield is triggered</h3>
+  <div class="scr"><img src="screens/10-recording-covert-screen.png"><div><h4><span class="num">10</span>Covert recording</h4><p>The screen looks like a locked phone showing only the clock. <b>Nothing says "recording".</b> Audio, time and GPS are being captured and sealed every 4 seconds.</p><table><tr><td>Tap the clock 5 times</td><td>Shows the hidden live evidence view (for her, or for the demo).</td></tr></table></div></div>
+  <div class="scr"><img src="screens/11-recording-live-evidence-view.png"><div><h4><span class="num">11</span>Live evidence view</h4><p>Shows recording time, trigger, GPS position, and each piece's seal as it is created (#0, #1, #2…). Each one is sealed within seconds.</p><table><tr><td>■ Stop (PIN required)</td><td>Opens the PIN prompt. Without the PIN, recording cannot be stopped.</td></tr></table></div></div>
+  <div class="scr"><img src="screens/12-recording-stop-pin.png"><div><h4><span class="num">12</span>Stop needs the PIN</h4><table><tr><td>Confirm</td><td>With the correct PIN: stops, finalises the file fingerprint and saves it to the Vault.</td></tr><tr><td>Cancel</td><td>Keeps recording.</td></tr><tr><td>Wrong PIN</td><td>"Incorrect PIN". Recording continues.</td></tr></table></div></div>
+
+  <h3>D. Evidence Vault</h3>
+  <div class="scr"><img src="screens/16-vault-list.png"><div><h4><span class="num">13</span>Vault</h4><p>All sealed recordings with date, time, length, number of pieces, trigger type, GPS and fingerprint. <b>There is no delete option anywhere.</b></p><table><tr><td>Tap a recording</td><td>Opens its evidence record.</td></tr><tr><td>Load sample evidence <i>DEMO</i></td><td>Adds sample recordings for the demo (only shown when the vault is empty).</td></tr></table></div></div>
+  <div class="scr"><img src="screens/13-session-sealed-record.png"><div><h4><span class="num">14</span>Evidence record</h4><p>The full record: ID, start time, duration, trigger, location, device ID and the file's SHA-256 fingerprint.</p><table><tr><td>← Vault</td><td>Back to the list.</td></tr><tr><td>🔑 Unlock with PIN to listen</td><td>Plays the recording after the PIN, if her listening setting allows it.</td></tr><tr><td>Check seal integrity</td><td>Recalculates every fingerprint and checks the whole chain.</td></tr></table></div></div>
+  <div class="scr"><img src="screens/14-session-playback-and-integrity-ok.png"><div><h4><span class="num">15</span>Playback and chain of custody</h4><p>Read-only audio player (no trim, no edit). After <b>Check seal integrity</b>, every piece shows green: <b>"✓ All pieces intact"</b>. Each piece shows its audio fingerprint, the seal it links to, and its own seal.</p><table><tr><td>⬇ Export package</td><td>Downloads the original audio plus a manifest (.json) of all fingerprints, for SAPS, a lawyer or a court.</td></tr></table></div></div>
+  <div class="scr"><img src="screens/15-session-release-options.png"><div><h4><span class="num">16</span>Release to…</h4><p>Full-version release routes: SAPS case number, magistrate's court (protection order), lawyer / Legal Aid, Thuthuzela Care Centre, trusted person. Each release would use a secure, logged, verifiable link.</p><table><tr><td>Close</td><td>Back to the record.</td></tr></table></div></div>
+  <div class="scr"><img src="screens/20-session-simulate-tamper.png"><div><h4><span class="num">17</span>Simulate tampering <i>DEMO</i></h4><p>Shows the judges what happens if someone edits the evidence. It changes <b>one single byte</b> of one piece, like cutting out a word.</p><table><tr><td>Tamper</td><td>Makes the change.</td></tr><tr><td>Cancel</td><td>Leaves the evidence untouched.</td></tr></table></div></div>
+  <div class="scr"><img src="screens/21-session-tamper-detected.png"><div><h4><span class="num">18</span>Tampering detected</h4><p>After <b>Check seal integrity</b>: <b>"✕ Seal broken: tampering detected"</b>. The edited piece and every piece after it turn red, because each seal depends on the one before. One changed byte breaks the chain.</p></div></div>
+
+  <h3>E. Verify (for police, courts and lawyers)</h3>
+  <div class="scr"><img src="screens/17-verify-screen.png"><div><h4><span class="num">19</span>Verify evidence</h4><table><tr><td>🎧 Choose audio file</td><td>Selects any audio file to check.</td></tr><tr><td>📄 Add manifest</td><td>Optional. Compares against the exported manifest.</td></tr><tr><td>Verify</td><td>Calculates the file's SHA-256 and compares it to the sealed records.</td></tr><tr><td>✓ Check original <i>DEMO</i></td><td>Verifies the latest real recording.</td></tr><tr><td>✂ Check edited copy <i>DEMO</i></td><td>Removes 1 second from the recording and verifies the edited copy.</td></tr><tr><td>⬇ Download an edited copy</td><td>Saves an edited file so judges can test it themselves.</td></tr></table></div></div>
+  <div class="scr"><img src="screens/18-verify-authentic.png"><div><h4><span class="num">20</span>Result: AUTHENTIC</h4><p>The file is byte-for-byte identical to the sealed original. The result shows both fingerprints, the record ID, time and GPS. It also states: <i>"HerShield does not judge what is said in the recording. It only proves the recording is genuine."</i></p></div></div>
+  <div class="scr"><img src="screens/19-verify-not-authentic.png"><div><h4><span class="num">21</span>Result: NOT AUTHENTIC</h4><p>The edited copy (1 second removed) has a completely different fingerprint. <i>"A fabricated or edited recording can never pass this check. This protects people from false evidence too."</i></p></div></div>
+
+  <h3>F. Help, settings and protection features</h3>
+  <div class="scr"><img src="screens/22-help.png"><div><h4><span class="num">22</span>Get help now</h4><table><tr><td>GBV Command Centre</td><td>Calls 0800 428 428 (24/7, free).</td></tr><tr><td>GBV "Please call me"</td><td>Dials *120*7867# (works without airtime).</td></tr><tr><td>SAPS emergency</td><td>Calls 10111.</td></tr><tr><td>Childline</td><td>Calls 116.</td></tr><tr><td>Nearest police / Thuthuzela / protection-order guide / safety plan</td><td><span class="tag soon">full version</span>. Opens an explanation popup (next screen).</td></tr></table></div></div>
+  <div class="scr"><img src="screens/23-help-full-version-popup.png"><div><h4><span class="num">23</span>"Full version" popup</h4><p>Every planned feature has its place in the app. Tapping it explains that the feature belongs to the full version. This shows the full skeleton without pretending it is finished.</p><table><tr><td>Got it</td><td>Closes the popup.</td></tr></table></div></div>
+  <div class="scr"><img src="screens/24-settings-appearance-triggers.png"><div><h4><span class="num">24</span>Settings: appearance and triggers</h4><table><tr><td>Theme colour / custom</td><td>Change theme any time.</td></tr><tr><td>Dark mode</td><td>On or off.</td></tr><tr><td>Secret phrase: Change</td><td>Requires the PIN, then reopens phrase training.</td></tr><tr><td>Phrase sensitivity</td><td>Higher means it triggers more easily. We prefer a false start to a missed attack.</td></tr><tr><td>Shake 3 times / Triple-tap</td><td>Turn the backup triggers on or off.</td></tr><tr><td>Volume pattern / Bracelet</td><td><span class="tag soon">full version</span></td></tr></table></div></div>
+  <div class="scr"><img src="screens/25-settings-evidence.png"><div><h4><span class="num">25</span>Settings: evidence</h4><table><tr><td>Who can listen?</td><td>(1) Me after PIN (recommended) · (2) Me any time · (3) Nobody until official release. Changing it requires the PIN.</td></tr><tr><td>Cloud backup</td><td><span class="tag soon">full version</span> Encrypted copy plus trusted timestamp.</td></tr><tr><td>Alert trusted people</td><td><span class="tag soon">full version</span> SMS with location.</td></tr><tr><td>Delete recordings</td><td><span class="tag no">🔒 Off</span>, permanently, by design.</td></tr></table></div></div>
+  <div class="scr"><img src="screens/26-settings-privacy-demo.png"><div><h4><span class="num">26</span>Settings: privacy, language, demo tools</h4><table><tr><td>Change PIN / Duress PIN</td><td>Requires the current PIN.</td></tr><tr><td>Disguise</td><td>Calculator (Notes and Weather to come).</td></tr><tr><td>Language</td><td>English now. Sepedi, isiZulu, Afrikaans, Xitsonga, Tshivenda, isiXhosa and Setswana planned.</td></tr><tr><td>Load samples / Replay setup / Reset <i>DEMO</i></td><td>Demo-only tools. The real app <b>cannot</b> be reset or wiped.</td></tr></table></div></div>
+  <div class="scr"><img src="screens/27-home-rose-dark-theme.png"><div><h4><span class="num">27</span>Her theme: Rose + dark mode</h4><p>The whole app recolours to her choice: gradients, buttons and tabs.</p></div></div>
+  <div class="scr"><img src="screens/28-settings-teal-theme.png"><div><h4><span class="num">28</span>Her theme: Teal (light)</h4><p>Another example. Any colour can be picked with the custom colour wheel.</p></div></div>
+  <div class="scr"><img src="screens/29-duress-decoy-empty-vault.png"><div><h4><span class="num">29</span>Duress PIN: the decoy</h4><p>Opened with the duress PIN <code>0000</code>. The vault looks empty and the shield shows nothing. If an abuser forces her to "show him the app", the real evidence stays hidden and untouched.</p></div></div>
+</section>
+
+<!-- ============ 10. TECH ============ -->
+<section class="page">
+  <h2><span class="n">09</span> Technology: the demo and the full product</h2>
+  <h3>Today's demo (built for the hackathon)</h3>
+  <table>
+    <tr><th style="width:28%">Technology</th><th>Used for</th><th>Why we chose it</th></tr>
+    <tr><td><b>HTML5, CSS3, JavaScript</b> (no framework)</td><td>The whole app</td><td>Runs on <b>Android and iPhone</b> in any modern browser with nothing to install. No build tools, so it is fast to build and easy to show. The demo can be added to the home screen as an app (PWA).</td></tr>
+    <tr><td><b>Service Worker (PWA)</b></td><td>Offline mode</td><td>After the first visit, the app loads and works with <b>no internet</b>, proving the offline-first idea.</td></tr>
+    <tr><td><b>MediaRecorder API</b></td><td>Microphone recording in 4-second pieces</td><td>Built into browsers, on-device, no cost.</td></tr>
+    <tr><td><b>Web Speech API</b></td><td>Recognising the secret phrase</td><td>Lets us demonstrate voice triggering. <i>Limitation:</i> in browsers it may need internet, which is why the full app uses an offline on-device wake-word engine.</td></tr>
+    <tr><td><b>Web Crypto API (SHA-256)</b></td><td>Fingerprints and the seal chain</td><td>The industry-standard hash, built into every browser and phone. The same algorithm is used for digital signatures and blockchains.</td></tr>
+    <tr><td><b>IndexedDB</b></td><td>Evidence Vault storage</td><td>Stores audio on the device. <b>We deliberately wrote no delete function.</b></td></tr>
+    <tr><td><b>Geolocation API, Device Motion API</b></td><td>GPS location, shake trigger</td><td>Phone hardware, works offline.</td></tr>
+  </table>
+
+  <h3>The full product</h3>
+  <table>
+    <tr><th style="width:28%">Layer</th><th>Technology</th><th>Why</th></tr>
+    <tr><td><b>Mobile app (Android + iOS)</b></td><td><b>Flutter (Dart)</b></td><td>One codebase builds real native apps for both platforms. It performs well on low-cost Android phones, which most South African women use.</td></tr>
+    <tr><td><b>Android native module</b></td><td><b>Kotlin</b></td><td>The always-on <i>foreground service</i>, background microphone, volume-button trigger and Android Keystore all need native Android code.</td></tr>
+    <tr><td><b>iOS native module</b></td><td><b>Swift</b></td><td>Siri Shortcuts / App Intents (custom phrase), Back Tap and Action Button, AVAudioSession background recording, and Secure Enclave all need native iOS code.</td></tr>
+    <tr><td><b>Offline wake word</b></td><td>openWakeWord / Vosk (open source) or Picovoice Porcupine</td><td>Recognises her custom phrase <b>fully on the device</b>, with no internet and low battery use.</td></tr>
+    <tr><td><b>On-device security</b></td><td>AES-256-GCM encryption, SQLCipher (encrypted SQLite), keys in Keystore / Secure Enclave</td><td>If the phone is stolen or searched, the recordings cannot be read without her PIN.</td></tr>
+    <tr><td><b>Backend API</b></td><td><b>Node.js + TypeScript</b> (NestJS)</td><td>The same language family as our demo (JavaScript), fast to develop, and widely taught.</td></tr>
+    <tr><td><b>Database and storage</b></td><td>PostgreSQL. Encrypted object storage in a <b>South African cloud region</b></td><td>Keeps personal data in the country, in line with POPIA.</td></tr>
+    <tr><td><b>Proof of time</b></td><td>RFC 3161 trusted timestamps plus an append-only transparency log (Merkle tree)</td><td>Proves the fingerprint existed at a given time, independent of the phone's clock.</td></tr>
+    <tr><td><b>Verification portal</b></td><td>Web app (React / Next.js) for SAPS, NPA, courts and lawyers</td><td>Officials can verify evidence and receive releases securely, with an access log.</td></tr>
+    <tr><td><b>SMS fallback</b></td><td>Bulk-SMS gateway</td><td>Sends fingerprints and trusted-contact alerts when there is no data.</td></tr>
+  </table>
+
+  <h3>Full-product architecture</h3>
+  <div class="arch">
+    <div><b>📱 On the phone (offline)</b>Wake-word engine → covert recorder → 4-second sealing → encrypted vault. Disguise, duress PIN, triggers.</div>
+    <div><b>☁️ When connected</b>Fingerprints → trusted timestamp server and transparency log. Optional encrypted audio backup. Alerts to trusted people.</div>
+    <div><b>⚖️ Justice side</b>Verification portal: SAPS, courts and Legal Aid receive releases, check fingerprints and see the chain of custody.</div>
+  </div>
+</section>
+
+<!-- ============ 11. LEGAL ============ -->
+<section>
+  <h2 style="margin-top:16px"><span class="n">10</span> Legal, privacy and ethics (South Africa)</h2>
+  <table>
+    <tr><th style="width:30%">Law / issue</th><th>How HerShield responds</th></tr>
+    <tr><td><b>RICA</b> (Regulation of Interception of Communications Act)</td><td>RICA generally allows a person who is <b>a party to a conversation</b> to record it. HerShield records her own surroundings and conversations she is part of. She is not secretly tapping other people's calls.</td></tr>
+    <tr><td><b>ECTA</b> (Electronic Communications and Transactions Act), s15</td><td>When a court weighs electronic evidence, it looks at how reliably it was created and stored and how its <b>integrity</b> was kept. The seal chain and manifest were designed for exactly this.</td></tr>
+    <tr><td><b>Domestic Violence Act</b> (116 of 1998, amended 2021)</td><td>Evidence supports applications for <b>protection orders</b>. The amended Act also allows applications to be made online, which our "Release to court" route builds on.</td></tr>
+    <tr><td><b>POPIA</b> (Protection of Personal Information Act)</td><td>The data stays on her phone by default. Any cloud copy is encrypted and stored in South Africa. Nothing is shared without her action.</td></tr>
+    <tr><td><b>Privacy of others</b></td><td>The app stores nothing until it is triggered. The wake-word listener throws sound away immediately.</td></tr>
+    <tr><td><b>Misuse</b></td><td>It cannot fabricate evidence, cannot edit evidence, and never names or accuses anyone.</td></tr>
+  </table>
+  <p class="muted small">This prototype has not had legal review. Before launch, we would ask legal experts (e.g. a university law clinic or a GBV legal NGO) to confirm admissibility and compliance.</p>
+</section>
+
+<!-- ============ 12. STATUS ============ -->
+<section class="page">
+  <h2><span class="n">11</span> What works today and what comes next</h2>
+  <table>
+    <tr><th>Feature</th><th style="width:22%">Status</th></tr>
+    <tr><td>Setup wizard: phrase, theme, PIN, duress PIN, disguise, permissions, trusted people</td><td><span class="tag ok">works in demo</span></td></tr>
+    <tr><td>Working calculator disguise. PIN + "=" unlocks. Duress PIN opens an empty decoy</td><td><span class="tag ok">works in demo</span></td></tr>
+    <tr><td>Voice phrase trigger (browser speech recognition)</td><td><span class="tag ok">works in demo</span> (best in Chrome; may need internet)</td></tr>
+    <tr><td>Shake trigger, triple-tap trigger, simulated trigger</td><td><span class="tag ok">works in demo</span></td></tr>
+    <tr><td>Covert "locked screen" recording view. Stopping needs the PIN</td><td><span class="tag ok">works in demo</span></td></tr>
+    <tr><td>Real microphone recording, GPS, timestamps</td><td><span class="tag ok">works in demo</span></td></tr>
+    <tr><td>4-second SHA-256 hash-chain sealing</td><td><span class="tag ok">works in demo</span></td></tr>
+    <tr><td>Vault with no delete. PIN-protected read-only playback. Three listening policies</td><td><span class="tag ok">works in demo</span></td></tr>
+    <tr><td>Integrity check. Tamper simulation and detection</td><td><span class="tag ok">works in demo</span></td></tr>
+    <tr><td>Export of original audio + manifest. Verify tool (authentic / not authentic)</td><td><span class="tag ok">works in demo</span></td></tr>
+    <tr><td>Themes (6 presets + custom) and dark mode. Quick exit on every screen</td><td><span class="tag ok">works in demo</span></td></tr>
+    <tr><td>Helplines with tap-to-call</td><td><span class="tag ok">works in demo</span></td></tr>
+    <tr><td>Offline on-device wake word (always-on, screen off)</td><td><span class="tag soon">full version</span></td></tr>
+    <tr><td>Volume-button pattern, Bluetooth bracelet, smartwatch, Back Tap / Action Button</td><td><span class="tag soon">full version</span></td></tr>
+    <tr><td>Encryption at rest. Trusted timestamps. Cloud backup. SMS fallback</td><td><span class="tag soon">full version</span></td></tr>
+    <tr><td>Release to SAPS, court or lawyer. Verification portal</td><td><span class="tag soon">full version</span></td></tr>
+    <tr><td>Trusted-person alerts. Nearest police station / Thuthuzela map. Safety plan</td><td><span class="tag soon">full version</span></td></tr>
+    <tr><td>8 South African languages. Notes / Weather disguises. Video option</td><td><span class="tag soon">full version</span></td></tr>
+  </table>
+  <p class="muted small">Honest note on the demo: the evidence is stored in the browser on one device, and the seal chain is checked on that device. In the full product, fingerprints are also registered with an independent timestamp server, so even someone with complete control of the phone could not quietly rebuild a fake chain.</p>
+
+  <h2 style="margin-top:18px"><span class="n">12</span> Roadmap</h2>
+  <table>
+    <tr><th style="width:22%">Phase</th><th>Goal</th></tr>
+    <tr><td><b>1. Validate</b><br>(next 1–2 months)</td><td>Talk to GBV survivors' organisations, SAPS victim-support units, a law clinic and Thuthuzela Care Centres. Test whether phrases trigger reliably in real conditions (crying, noise, phone in a bag).</td></tr>
+    <tr><td><b>2. Build the MVP app</b></td><td>Flutter app for Android first (most SA users), with the offline wake word, encrypted vault and trusted timestamps.</td></tr>
+    <tr><td><b>3. Pilot</b></td><td>Pilot with an NGO in Limpopo, then measure triggers, reliability and whether evidence was accepted.</td></tr>
+    <tr><td><b>4. Justice integration</b></td><td>Verification portal for SAPS and courts. Links with Domestic Violence Act online applications.</td></tr>
+    <tr><td><b>5. Scale</b></td><td>iOS, Bluetooth bracelet, 8 languages, zero-rated data partnerships.</td></tr>
+  </table>
+
+  <h2 style="margin-top:18px"><span class="n">13</span> What we learned</h2>
+  <ul>
+    <li><b>A panic button is the wrong design when the victim cannot reach her phone.</b> That realisation moved us to a voice trigger she can use hands-free.</li>
+    <li><b>Fairness makes the solution stronger, not weaker.</b> Designing against false accusations led to the no-delete, no-edit seal, and that is exactly what makes her evidence believable.</li>
+    <li><b>Offline matters in South Africa.</b> Data costs and the abuser's control over connectivity are real barriers.</li>
+    <li><b>Platform honesty:</b> Android and iOS restrict background listening differently, so the product needs several types of trigger.</li>
+    <li>Building alone taught us to <b>prioritise one clear user journey</b>, then show the rest of the product as a clearly labelled skeleton.</li>
+  </ul>
+</section>
+
+<!-- ============ 14. LOGO ============ -->
+<section>
+  <h2 style="margin-top:18px"><span class="n">14</span> The HerShield mark</h2>
+  <div style="display:grid;grid-template-columns:60mm 1fr;gap:14px;align-items:center">
+    <div style="border:1px solid var(--line);border-radius:16px;padding:14px;text-align:center"><img src="../app/logo.svg" style="width:48mm"></div>
+    <div><p>We deliberately <b>did not use a shield</b>. At first glance the mark is a <b>voice waveform</b>, the sound that triggers HerShield. Look again: the two tall bars are an <b>H</b>, and the wave between them is an <b>S lying on its side</b>, forming the H's crossbar. <b>H + S, hidden in plain sight</b>, just as HerShield hides in plain sight on her phone.</p><p class="muted small">Colours: violet #7C3AED → pink #EC4899 (default). The mark recolours with the user's chosen theme.</p></div>
+  </div>
+</section>
+
+<!-- ============ 15. PITCH PLAN ============ -->
+<section class="page">
+  <h2><span class="n">15</span> Presentation plan: 8 minutes + 4 minutes Q&A</h2>
+  <table>
+    <tr><th style="width:15%">Time</th><th style="width:25%">Brief question</th><th>What to say and show</th></tr>
+    <tr><td>0:00–1:15</td><td>1. The challenge</td><td>"When a woman reports abuse in South Africa, it is often her word against his. Many women aren't believed. And sometimes an accusation is believed with no proof. Both happen for the same reason: there is no trustworthy evidence. And during an attack, she can't open an app."</td></tr>
+    <tr><td>1:15–2:15</td><td>2. Our solution</td><td>"HerShield is a black box for GBV. Her own secret everyday phrase starts a hidden recording. It is sealed every 4 seconds, it can't be deleted or edited by anyone, and anyone can verify it. It records facts, never accusations."</td></tr>
+    <tr><td>2:15–5:45</td><td>3. Demo</td><td>Calculator → type 1234 = → Shield armed → <b>say the phrase</b> (or Simulate trigger) → black "locked" screen → tap the clock 5× → seals appearing → Stop needs the PIN → Vault (no delete) → <b>Verify: original ✓ AUTHENTIC, edited ✕ NOT AUTHENTIC</b> → Simulate tampering → seal broken → Settings: themes and "who can listen" → duress PIN shows an empty decoy.</td></tr>
+    <tr><td>5:45–6:45</td><td>4. Impact</td><td>Women are believed because the evidence is credible. Protection orders and prosecutions get easier. The accused is protected from fake evidence. It is free and offline, so it works for rural and low-income women.</td></tr>
+    <tr><td>6:45–8:00</td><td>5. Learning and next steps</td><td>What works today versus the full version (be honest). Next: offline wake word, Flutter app, trusted timestamps, bracelet, pilot with an NGO, a SAPS/court portal. What we learned: designing for fairness made it stronger.</td></tr>
+  </table>
+  <h3>Likely judge questions</h3>
+  <table>
+    <tr><th style="width:38%">Question</th><th>Answer</th></tr>
+    <tr><td>What if a woman uses it to make a false accusation?</td><td>She can't edit, cut or fabricate anything, and HerShield stores no accusations, only raw sealed recordings. If the recording contradicts her claim, it helps the accused. Courts decide.</td></tr>
+    <tr><td>Is secret recording legal?</td><td>In South Africa, RICA generally allows a person who is part of a conversation to record it. We would still get formal legal review before launch.</td></tr>
+    <tr><td>What if he takes or smashes the phone?</td><td>Everything is sealed every 4 seconds. The app has no delete function and stopping needs the PIN. It hides as a calculator, and a duress PIN shows a decoy. In the full version, fingerprints sync to the cloud when there is any signal.</td></tr>
+    <tr><td>Can't she just delete the whole app?</td><td>Uninstalling removes it from that phone, which is why the full version backs up fingerprints and encrypted audio off the phone when it can. The design goal is that evidence, once captured, survives.</td></tr>
+    <tr><td>Does it drain the battery or cost data?</td><td>Wake-word engines are designed for low power. All core features work offline at no cost to her.</td></tr>
+    <tr><td>Does this work on iPhone?</td><td>Yes, with differences. Apple restricts always-on listening, so on iPhone we use Siri Shortcuts with her phrase, Back Tap, the Action Button and the bracelet. We designed for both platforms' rules.</td></tr>
+    <tr><td>What about false triggers?</td><td>A false trigger just makes a harmless sealed recording. We prefer that to missing an attack. She can pause the shield in safe places.</td></tr>
+    <tr><td>How is this different from other safety apps?</td><td>Panic apps send alerts and leave nothing a court can use. HerShield creates <b>verifiable evidence</b>, works hands-free and offline, and is fair to both sides.</td></tr>
+  </table>
+  <p class="footer-note">Helplines referenced: GBV Command Centre 0800 428 428 · USSD *120*7867# · SAPS 10111 · Childline 116.<br>HerShield, Team 4.1, Rosebank International Polokwane · WEtTech Hackathon · 31 October 2026.</p>
+</section>
+</body>
+</html>

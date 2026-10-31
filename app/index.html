@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Calculator</title>
+  <meta name="theme-color" content="#111111">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="calc-icon.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="phone">
+    <main id="view"></main>
+    <nav id="tabbar" hidden>
+      <button data-go="home"><span class="ico">◉</span><span>Shield</span></button>
+      <button data-go="vault"><span class="ico">▤</span><span>Vault</span></button>
+      <button data-go="verify"><span class="ico">✓</span><span>Verify</span></button>
+      <button data-go="help"><span class="ico">✚</span><span>Help</span></button>
+      <button data-go="settings"><span class="ico">⚙</span><span>Settings</span></button>
+    </nav>
+    <div id="toast" hidden></div>
+    <div id="modal" hidden></div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

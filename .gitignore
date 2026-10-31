@@ -1,0 +1,14 @@
+# Vercel project link (local only)
+.vercel/
+app/.vercel/
+
+# Event materials from the organisers (not part of the project)
+*.zip
+RI_Hackathon_Programme_and_Schedule_2026.pdf
+Student Presentation Brief - WEtTech 2026.pdf
+WhatsApp Image*.jpeg
+
+# OS / editor
+Thumbs.db
+.DS_Store
+desktop.ini

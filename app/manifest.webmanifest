@@ -1,0 +1,10 @@
+{
+  "name": "Calculator",
+  "short_name": "Calculator",
+  "description": "HerShield: discreet, tamper-evident evidence capture (disguised as a calculator).",
+  "start_url": "./index.html#disguise",
+  "display": "standalone",
+  "background_color": "#111111",
+  "theme_color": "#111111",
+  "icons": [{ "src": "calc-icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}
